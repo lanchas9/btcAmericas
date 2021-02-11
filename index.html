@@ -317,7 +317,7 @@
                 break;
                 case 2:
                     timer += 1;
-                    if (timer >= 160) {
+                    if (timer >= 280) {
                         timer = 0;
                         //estadoAnimacion = 3;
                         //Solo animacion de IDA sin Regreso
@@ -331,9 +331,10 @@
                         // app.stage.addChild(botonBuscar);
                         // app.stage.addChild(basicText);
                         animacionXclick=false;
+                        randomIndex=-1;
                         // preparaAnimacion();
                         estadoAnimacion = 4;
-                    }else if (timer >= 60) {
+                    }else if (timer >= 180) {
                         imgAnimacion.alpha -= 0.01; 
                     }
                 break;
@@ -395,7 +396,7 @@
                 break;
                 case 4:
                     timer+=1;
-                    if (timer >=180){
+                    if (timer >=300){
                         timer=0;
                         estadoAnimacion = 0;
                     }
@@ -923,8 +924,8 @@
                         img.anchor.y = 0.5;
                         img.identifier = index;
                         img.on('click', abreFoto);
-                        // img.on('tap',  abreFoto);
-                        // img.on('pointerdown',  abreFoto);
+                        img.on('tap',  abreFoto);
+                        img.on('pointerdown',  abreFoto);
                         img.interactive = true;
                         img.buttonMode = true;
                         app.stage.addChild(img);
