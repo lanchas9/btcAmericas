@@ -10,17 +10,15 @@
             display: block;
         }
     </style>
-        <!-- Google Analytics -->
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-DPL1LTBBB7"></script>
         <script>
-            // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            // })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        
-            // ga('create', 'UA-77860583-2', 'auto');
-            // ga('send', 'pageview');
-            </script>
-            <!-- End Google Analytics -->
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-DPL1LTBBB7');
+        </scr    
 </head>
 <body>
     <canvas id="myCanvas"></canvas> 
@@ -157,7 +155,7 @@
         //     const basicText = new PIXI.Text('BUSCAR', style);
         //     basicText.alpha = 0;
 
-        // agregaBackground(); //agrega background a la pagina completa
+        agregaBackground(); //agrega background a la pagina completa
         agregaBackColor();
         let sentidoScreenSaver = false;
         let centralizacion = false;
@@ -568,7 +566,7 @@
             }
 
         function agregaOverlayImagen() {
-                const texture = PIXI.Texture.from('imagen.jpg');
+                const texture = PIXI.Texture.from('imagen.png');
                 //const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + index + '.JPG');
                 const img = new PIXI.Sprite(texture);   
                 //img.x = (app.renderer.width - maxsize) / 2;
