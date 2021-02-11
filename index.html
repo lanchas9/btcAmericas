@@ -10,7 +10,7 @@
             display: block;
         }
     </style>
-        <!-- Global site tag (gtag.js) - Google Analytics -->
+        Global site tag (gtag.js) - Google Analytics
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-DPL1LTBBB7"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
@@ -155,7 +155,7 @@
         //     const basicText = new PIXI.Text('BUSCAR', style);
         //     basicText.alpha = 0;
 
-        agregaBackground(); //agrega background a la pagina completa
+
         agregaBackColor();
         let sentidoScreenSaver = false;
         let centralizacion = false;
@@ -177,6 +177,9 @@
         app.ticker.speed = 20;
         var size = [1920, 1080];
         var ratio = size[0] / size[1];
+
+        var animacionXclick = false;
+        var idFotoXclick = 0;
         //TODO: 
         //leer parametros de entrada con el nombre del proyecto a cargar
         //animacion de loading
@@ -220,6 +223,7 @@
                 // if (modalidadDeBotonBuscar) {
                 //     agregaBotonBuscar();  //agrega boton buscar
                 // }
+                agregaBackground();
                 agregaCuadricula(); //agrega las fotos a desplegar 
                 agregaOverlayImagen(); //agrega la imagen de overlay
                 agregaOverlayTransparente();
@@ -234,7 +238,7 @@
                     calX = 0;
                     calY = 0;
             }else{
-                animate2();
+                animate3();
             }
         }else{
             console.log("Loading Json...");
@@ -265,10 +269,23 @@
         document.location.reload();
     }
 
-        window.onresize = function (event) {
-            // resizeResponsive();
-            resizeMovil();
-        };
+    window.onresize = function (event) {
+        // resizeResponsive();
+        resizeMovil();
+    };
+
+    function animate3(){
+        if (animacionXclick){
+            if (randomIndex == idFotoXclick){
+                animate2();
+            }else{ 
+                randomIndex = idFotoXclick;
+                preparaAnimacion();
+                estadoAnimacion = 0;
+                animate2();
+            }
+        }
+    }
 
         function animate2(){    
             let cuadro = colSprites[randomIndex];
@@ -313,7 +330,8 @@
                         // app.stage.removeChild(basicText);
                         // app.stage.addChild(botonBuscar);
                         // app.stage.addChild(basicText);
-                        preparaAnimacion();
+                        animacionXclick=false;
+                        // preparaAnimacion();
                         estadoAnimacion = 4;
                     }else if (timer >= 60) {
                         imgAnimacion.alpha -= 0.01; 
@@ -490,15 +508,15 @@
         function preparaAnimacion(){
             let check = false;
             let contador = 0;
-            
-            while (check == false){
-                randomIndex = dameSiguienteCuadro();
-                check = arrayNombresFotos[randomIndex].check;
-                // let name = pathSkandia + arrayNombresFotos[randomIndex].pathFull;
-                contador=contador+1;
-                console.log("IntentosEncontrarRandom");
+            if (!animacionXclick){
+                while (check == false){
+                    randomIndex = dameSiguienteCuadro();
+                    check = arrayNombresFotos[randomIndex].check;
+                    // let name = pathSkandia + arrayNombresFotos[randomIndex].pathFull;
+                    contador=contador+1;
+                    console.log("IntentosEncontrarRandom");
+                }
             }
-
             
             let val = 0;
             
@@ -548,10 +566,10 @@
                 
                 //img.x = (app.renderer.width - maxsize) / 2;
                 //img.y = (app.renderer.height - maxsize) / 2;
-                img.x = 0;
-                img.y = 0;
-                img.width = newWidth;
-                img.height = newHeight;
+                img.x = margenX - (cWidth / 2);
+                img.y = margenY - (cHeight / 2);
+                img.width = cWidth * cuadriculaHorizontal;
+                img.height = cHeight * cuadriculaVertial;
                 //background.anchor.x = 0.0;
                 //background.anchor.y = 0.0;
                 //background.color = red;
@@ -566,14 +584,14 @@
             }
 
         function agregaOverlayImagen() {
-                const texture = PIXI.Texture.from('imagen.png');
+                const texture = PIXI.Texture.from('imagen1.png');
                 //const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + index + '.JPG');
                 const img = new PIXI.Sprite(texture);   
                 //img.x = (app.renderer.width - maxsize) / 2;
                 //img.y = (app.renderer.height - maxsize) / 2;
                 img.x = margenX - (cWidth / 2);
                 img.y = margenY - (cHeight / 2);
-                img.width =  cWidth* cuadriculaHorizontal;
+                img.width = cWidth * cuadriculaHorizontal;
                 img.height = cHeight * cuadriculaVertial;
                 //background.anchor.x = 0.0;
                 //background.anchor.y = 0.0;
@@ -764,6 +782,13 @@
                 app.stage.removeChild(item);
             }
 
+            function abreFoto(x){
+                let id = x.currentTarget.identifier;
+                console.log({ id });
+                idFotoXclick = id;
+                animacionXclick = true;
+            }
+
             // function muestraFotoDeBusqueda(item, index){
             //     if(index < 5){
             //         let idNombre = item.id
@@ -896,6 +921,12 @@
                         img.height = cHeight;
                         img.anchor.x = 0.5;
                         img.anchor.y = 0.5;
+                        img.identifier = index;
+                        img.on('click', abreFoto);
+                        // img.on('tap',  abreFoto);
+                        // img.on('pointerdown',  abreFoto);
+                        img.interactive = true;
+                        img.buttonMode = true;
                         app.stage.addChild(img);
                         colTextures.push(texture);
                         colSprites.push(img);
