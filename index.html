@@ -23,7 +23,7 @@
 <body>
     <canvas id="myCanvas"></canvas> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.8/pixi.min.js"></script>
-    <!-- <script src="PIXI.TextInput.js"></script> -->
+    <script src="PIXI.TextInput.min.js"></script>
     <script type="text/javascript">
         const canvas = document.getElementById('myCanvas');
         const app = new PIXI.Application({
@@ -39,6 +39,7 @@
 //---------------------
 //LOAD JSON
     var arrayNombresFotos = [];
+    var arrayHotZones = [];
     // var jsonFile = 'https://mosaico.app:4320/v1/clients/static/24341f6a-c47f-4187-8863-0514ee02b869-LuisDemo';
     var jsonFile = 'table.json'
     // let pathSkandia = 'https://mosaico.app:4320/public/'
@@ -53,23 +54,48 @@
                 if (final.hasOwnProperty(key)) {
                     var item = final[key];
                     arrayNombresFotos.push({
-                        id: item.id,
+                        id: arrayNombresFotos.length,
                         path : item.path,
                         check : item.check,
                         pathFull : item.pathFull
                     });
+                    if (item.check){
+                        arrayHotZones.push({
+                            id: arrayNombresFotos.length,
+                        });
+                    }
                 }
             }
-            console.log('FINAL Array:' + arrayNombresFotos.length);
+            console.log('Fotos Mosaico:' + arrayNombresFotos.length);
             terminamosLoading = true;
+        });
+
+        
+        jsonFile = 'nombres.json'
+        var arrayNombresPersonas = [];
+        fetch(jsonFile)
+        .then(response => response.json())
+        .then(data => {
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    var item = data[key];
+                    arrayNombresPersonas.push({
+                        id: item.Id,
+                        nombreUsuario: item.Nombre,
+                        archivo: item.Archivo
+                    });
+                }
+            }
+            console.log('Personas Mosaico:' + arrayNombresPersonas.length);
+            // terminamosLoading = true;
         });
 
         //document.body.appendChild(app.view);
         let index = 0;
         let indexScreenSaver = 0;
         let primeraVezLoading = true;
-        const cuadriculaHorizontal = 96;
-        const cuadriculaVertial = 54;
+        const cuadriculaHorizontal = 64;
+        const cuadriculaVertial = 36;
         let terminamosLoading = false;
         let hayBanner = false;
         let modoRandom = true;
@@ -118,18 +144,21 @@
         let colSprites = [PIXI.Sprite];
         let overlay = PIXI.Sprite;
         let overlayGrid = PIXI.Sprite;
-        let resizeFactor = 5;
-        let velocidadAnimacionFactor = 5;
+        let resizeFactor = 6;
+        let velocidadAnimacionFactor = 3;
         var randomIndex = 0;
         let background = new PIXI.Graphics();
-        let botonPrivacidad = new PIXI.Graphics();
-        botonPrivacidad.alpha = 1;
-        botonPrivacidad.visible = true;
-        botonPrivacidad.enabled = true;
-        var modalidadDeBotonBuscar  = false;
+        // let botonPrivacidad = new PIXI.Graphics();
+        let botonBuscar = new PIXI.Graphics();
+        let botonBuscar2 = new PIXI.Graphics();
+        let botonExit = new PIXI.Graphics();
+        // botonPrivacidad.alpha = 0;
+        // botonPrivacidad.visible = false;
+        // botonPrivacidad.enabled = false;
+        var modalidadDeBotonBuscar  = true;
         var modoPopUp = false;
         let popUp = new PIXI.Graphics();
-        var inputLabel;
+        var inputLabel ;
         var indexMuestraResultados=0;
         let arrayResultados = [];
         let imagenParaAnimar = 0;
@@ -213,22 +242,24 @@
         var calY = 0;
         //estaba en main antes
 		app.ticker.add(animate); 
-        // agregaBotonBuscar();  //agrega boton buscar
+        
     //} 
     function animate(){
         if (terminamosLoading){
             if (estadoAnimacion == -1){
                 estadoAnimacion = 4;
-                //agregaBackColor();  //agrega color atras del mosaico
-                // if (modalidadDeBotonBuscar) {
-                //     agregaBotonBuscar();  //agrega boton buscar
-                // }
+                agregaBackColor();  //agrega color atras del mosaico
+                
                 agregaBackground();
                 agregaCuadricula(); //agrega las fotos a desplegar 
                 agregaOverlayImagen(); //agrega la imagen de overlay
                 agregaOverlayTransparente();
                 preparaAnimacion();
-                agregaBotonPoliticaPrivacidad();
+                if (modalidadDeBotonBuscar) {
+                    agregaBotonBuscar();  //agrega boton buscar
+                }
+                // agregaBotonPoliticaPrivacidad();
+                // agregaBotonBuscar();
                 //cargamos una textura demo
                     timer = 0;
                     centroX = background.x + (background.width / 2);
@@ -237,6 +268,7 @@
                 //let centroY = background.y + (background.height / 2) + (cHeight / 2);
                     calX = 0;
                     calY = 0;
+
             }else{
                 animate3();
             }
@@ -312,6 +344,8 @@
                         imgAnimacion.x = imgAnimacion.x + calX;
                         imgAnimacion.y = imgAnimacion.y + calY;
                     } else {
+                        // imgAnimacion.x = centroX;
+                        // imgAnimacion.y = centroY;
                         estadoAnimacion = 2;
                     }
                 break;
@@ -608,7 +642,7 @@
             }
 
             function agregaOverlayTransparente() {
-                    const texture = PIXI.Texture.from('gridBlanca2.png');
+                    const texture = PIXI.Texture.from('gridBlanca64x36.png');
                     //const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + index + '.JPG');
                     const img = new PIXI.Sprite(texture);
                     //img.x = (app.renderer.width - maxsize) / 2;
@@ -682,18 +716,18 @@
         //         app.stage.addChild(botonBuscar);
         //         app.stage.addChild(basicText);
         //     }
-		
-		function agregaBotonPoliticaPrivacidad() {        
-            const texture = PIXI.Texture.from('avisoPrivacidad.png');
+		// function agregaBotonPoliticaPrivacidad() { 
+		function agregaBotonBuscar() {        
+            const texture = PIXI.Texture.from('buscar.png');
             const img = new PIXI.Sprite(texture);
-            let ancho = cWidth * 5;
+            let ancho = cWidth *10;
             let alto = ancho/6;
             
-            botonPrivacidad = img;
-            botonPrivacidad.anchor.x = 1.0;
-            botonPrivacidad.anchor.y = 1.0;
-            botonPrivacidad.width = ancho;
-            botonPrivacidad.height = alto;
+            botonBuscar = img;
+            botonBuscar.anchor.x = 1.0;
+            botonBuscar.anchor.y = 1.0;
+            botonBuscar.width = ancho;
+            botonBuscar.height = alto;
             
         //  let alto = app.renderer.height * .1 * .8;
         //  let ancho = alto * 32 / 9;
@@ -701,21 +735,21 @@
             // botonPrivacidad.x = margenX + newWidth - ancho -   (newHeight *.1*.1);
             // botonPrivacidad.y = margenY + newHeight - alto - (newHeight * .1 * .1);
 
-            botonPrivacidad.x = margenXmosaico + background.width - (background.height  * .1 * .1);
-            botonPrivacidad.y = margenYmosaico + background.height - (background.height * .1 * .1);
+            botonBuscar.x = margenXmosaico + background.width - (background.height  * .1 * .1);
+            botonBuscar.y = margenYmosaico + background.height - (background.height * .1 * .1);
         //  botonPrivacidad.beginFill(0x01C73C);
-            botonPrivacidad.interactive = true;
-            botonPrivacidad.buttonMode = true;
-            botonPrivacidad.on('click', abrePoliticas);
-            botonPrivacidad.on('tap', abrePoliticas);
-            botonPrivacidad.on('pointerdown', abrePoliticas);
+            botonBuscar.interactive = true;
+            botonBuscar.buttonMode = true;
+            botonBuscar.on('click', abrePopUp);
+            botonBuscar.on('tap', abrePopUp);
+            botonBuscar.on('pointerdown', abrePopUp);
             
 
         //  botonPrivacidad.drawRect(0, 0, ancho, alto);
         //  botonPrivacidad.endFill();
-            botonPrivacidad.alpha = 0.7;
+            botonBuscar.alpha = 1.0;
 
-            app.stage.addChild(botonPrivacidad);
+            app.stage.addChild(botonBuscar);
         }
 		
 		function abrePoliticas(){
@@ -729,17 +763,20 @@
                     imgAnimacion.alpha = 0.0;
                     estadoAnimacion = 5;
 
-                    popUp.x = background.width / 10;
-                    popUp.y = background.height / 10;
-                    let ancho = (background.width / 10) * 8;
-                    let alto = (background.height / 10) * 8;
-
+                    popUp.x = background.x + (background.width - (background.width / 16 * 9))/2;
+                    popUp.y = background.y;
+                    
+                    let ancho = background.width / 16 * 9;
+                    let alto = background.width / 16 * 9;
+                    
+                    // let ancho = (background.width / 10) * 8;
+                    // let alto = (background.height / 10) * 8;
                     //background.anchor.x = 0.0;
                     //background.anchor.y = 0.0;
                     //background.color = red;
                     // background.lineStyle(5, 0x00ff00);
                     //botonBuscar.beginFill(0xFF0000);
-                    popUp.beginFill(0xA9A9A9);
+                    popUp.beginFill(0x1F1F1F);
                     //background.drawCircle(0,0, background.width/2);
                     //background.alpha = 0.30;
                     popUp.drawRect(0, 0, ancho, alto);
@@ -755,29 +792,58 @@
                 
             }
 
-            // function mueveBotonBuscar(){
-            //     botonBuscar.x = inputLabel.x + inputLabel.width + 10;
-            //     botonBuscar.y = inputLabel.y;
-            //     botonBuscar.height = inputLabel.height;
+            function mueveBotonBuscar(){
+                const texture = PIXI.Texture.from('buscar2.png');
+                const img = new PIXI.Sprite(texture);
+                let ancho = cWidth * 6;
+                let alto = ancho / 2;
+
+                botonBuscar2 = img;
+                botonBuscar2.x = inputLabel.x + inputLabel.width + 10;
+                botonBuscar2.y = inputLabel.y;
+                botonBuscar2.height = inputLabel.height;
+                botonBuscar2.width = inputLabel.width / 4;
+                botonBuscar2.interactive = true;
+                botonBuscar2.buttonMode = true;
+                botonBuscar2.on('click', abrePopUp);
+                botonBuscar2.on('tap', abrePopUp);
+                botonBuscar2.on('pointerdown', abrePopUp);
                 
-            //     basicText.x = botonBuscar.x + botonBuscar.width / 10;
-            //     basicText.y = botonBuscar.y + botonBuscar.height / 10;
-            //     app.stage.removeChild(botonBuscar);
-            //     app.stage.addChild(botonBuscar);
-            //     app.stage.removeChild(basicText);
-            //     app.stage.addChild(basicText);
-            // }
+                // basicText.x = botonBuscar.x + botonBuscar.width / 10;
+                // basicText.y = botonBuscar.y + botonBuscar.height / 10;
+                app.stage.removeChild(botonBuscar);
+                app.stage.addChild(botonBuscar2);
+                // app.stage.removeChild(basicText);
+                // app.stage.addChild(basicText);
 
-            // function buscaNombre(){
-            //     arrayResultados = [];
-            //     arrayNombresFotos.forEach(buscaNombreEn);
-            //     console.log('Resultado final:' + arrayResultados.length);
-            //     indexMuestraResultados = 100;
-            //     arrayResultadosSprites.forEach(quitaDeStage);
-            //     arrayResultadosSprites = [];
-            //     arrayResultados.forEach(muestraFotoDeBusqueda);
+                const texture2 = PIXI.Texture.from('exit.png');
+                const img2 = new PIXI.Sprite(texture2);
 
-            // }
+                botonExit= img2;
+                botonExit.anchor.x = 1.0; 
+                botonExit.anchor.y = 0;
+                
+                botonExit.x = popUp.x + popUp.width;
+                botonExit.y = popUp.y;
+                botonExit.height = popUp.height/20;
+                botonExit.width = popUp.width / 20;
+                botonExit.interactive = true;
+                botonExit.buttonMode = true;
+                botonExit.on('click', quitaPopUp);
+                botonExit.on('tap', quitaPopUp);
+                botonExit.on('pointerdown', quitaPopUp);
+                app.stage.addChild(botonExit);
+            }
+
+            function buscaNombre(){
+                arrayResultados = [];
+                arrayNombresPersonas.forEach(buscaNombreEn);
+                console.log('Resultado final:' + arrayResultados.length);
+                indexMuestraResultados = 100;
+                arrayResultadosSprites.forEach(quitaDeStage);
+                arrayResultadosSprites = [];
+                arrayResultados.forEach(muestraFotoDeBusqueda);
+            }
 
             function quitaDeStage(item,index){
                 app.stage.removeChild(item);
@@ -787,114 +853,133 @@
                 let id = x.currentTarget.identifier;
                 console.log({ id });
                 idFotoXclick = id;
-                animacionXclick = true;
+                if(!modoPopUp){
+                    animacionXclick = true;
+                }
             }
 
-            // function muestraFotoDeBusqueda(item, index){
-            //     if(index < 5){
-            //         let idNombre = item.id
-            //         let str = '';
-            //         if (idNombre < 100) {
-            //             str = '0';
-            //         }
-            //         if (idNombre < 10) {
-            //             str += '0';
-            //         }
-            //         // const texture = PIXI.Texture.from('originalesWEB/Diapositiva' + str + idNombre + '.JPG');
-            //         let texture = new PIXI.Texture.from('originalesWEB/' + arrayNombresFotos[idNombre].nombreFoto);
-            //         const img = new PIXI.Sprite(texture);
-            //         img.x = popUp.x + (popUp.width / 40) + (indexMuestraResultados * index);
-            //         img.y = inputLabel.y + inputLabel.height + 10;
-            //         img.width = 90;
-            //         img.height = 90;
-            //         img.identifier = index;
-            //         // Opt-in to interactivity
-            //         img.interactive = true;
-
-            //         // Shows hand cursor
-            //         img.buttonMode = true;
-
-            //         // Pointers normalize touch and mouse
+            function muestraFotoDeBusqueda(item, index){
+                if(index < 7){
+                    // let idNombre = item.id
+                    // let str = '';
+                    // if (idNombre < 100) {
+                    //     str = '0';
+                    // }
+                    // if (idNombre < 10) {
+                    //     str += '0';
+                    // }
+                    // const texture = PIXI.Texture.from('originalesWEB/Diapositiva' + str + idNombre + '.JPG');
+                    // let texture = new PIXI.Texture.from('originalesWEB/' + arrayNombresFotos[idNombre].nombreFoto);
                     
-            //         img.on('tap', (event) => {
-            //             imagenParaAnimar = item.id;
-            //             quitaPopUp();
-            //         });
-            //         img.on('click', (event) => {
-            //             imagenParaAnimar = item.id;
-            //             quitaPopUp();
-            //         });
-            //         img.on('pointerdown', (event) => {
-            //             imagenParaAnimar = item.id;
-            //             quitaPopUp();
-            //         });
-                    
-            //         app.stage.addChild(img);
-            //         arrayResultadosSprites.push(img);
-            //         document.activeElement && document.activeElement.blur();
-            //     }
-            // }
+                    let texture = new PIXI.Texture.from('originalesWEB/' + arrayNombresFotos[arrayHotZones[item.id - 1].id - 1].pathFull);
 
-            // function quitaPopUp(){
-            //     arrayResultadosSprites.forEach(quitaDeStage);
-            //     arrayResultadosSprites = [];
-            //     app.stage.removeChild(inputLabel);
-            //     app.stage.removeChild(popUp);
-            //     botonBuscar.x = 0;
-            //     botonBuscar.y = 0;
-            //     basicText.x = botonBuscar.width / 10;
-            //     basicText.y = botonBuscar.height / 6;
-            //     modoPopUp = false;
-            //     preparaAnimacion()
-            //     estadoAnimacion=0;
-            // }
-            /*
+                    const img = new PIXI.Sprite(texture);
+                    // img.x = popUp.x + (popUp.width / 8 / 2) + (indexMuestraResultados * index);
+                    img.x = popUp.x + (popUp.width / 10 / 2) + ((indexMuestraResultados + popUp.width / 10 / 7)*index);
+                    img.y = inputLabel.y + inputLabel.height + 50;
+                    img.width = popUp.width / 10;
+                    img.height = popUp.width / 10;
+                    img.identifier = index;
+                    // Opt-in to interactivity
+                    img.interactive = true;
+
+                    // Shows hand cursor
+                    img.buttonMode = true;
+
+                    // Pointers normalize touch and mouse
+                    
+                    img.on('tap', (event) => {
+                        imagenParaAnimar = arrayNombresFotos[arrayHotZones[item.id - 1].id - 1].id;
+                        quitaPopUp();
+                    });
+                    img.on('click', (event) => {
+                        imagenParaAnimar = arrayNombresFotos[arrayHotZones[item.id - 1].id - 1].id;
+                        quitaPopUp();
+                    });
+                    img.on('pointerdown', (event) => {
+                        imagenParaAnimar = arrayNombresFotos[arrayHotZones[item.id - 1].id - 1].id;
+                        quitaPopUp();
+                    });
+                    
+                    app.stage.addChild(img);
+                    arrayResultadosSprites.push(img);
+                    document.activeElement && document.activeElement.blur();
+                }
+            }
+
+            function quitaPopUp(){
+                arrayResultadosSprites.forEach(quitaDeStage);
+                arrayResultadosSprites = [];
+                app.stage.removeChild(inputLabel);
+                app.stage.removeChild(popUp);
+                app.stage.removeChild(botonBuscar2);
+                app.stage.removeChild(botonExit);
+                app.stage.addChild(botonBuscar);
+                // botonBuscar.x = 0;
+                // botonBuscar.y = 0;
+                // basicText.x = botonBuscar.width / 10;
+                // basicText.y = botonBuscar.height / 6;
+                modoPopUp = false;
+                idFotoXclick = imagenParaAnimar;
+                estadoAnimacion=0;
+                animacionXclick = true;
+                // preparaAnimacion();
+            }
+            
             function seleccionaFoto(sprite){
                 console.log('Sprite#:' + sprite.identifier);
             }
-            */
 
-            // function buscaNombreEn(item, index){
-            //     let nombreParaBuscar = inputLabel.text.toUpperCase();
-            //     let nombreActual = item.nombreUsuario.toUpperCase();
-            //     if (nombreActual.search(nombreParaBuscar) >= 0) {
-            //         arrayResultados.push({
-            //             id: item.id,
-            //             filename: item.nombreFoto,
-            //             username: item.nombreUsuario
-            //         });
-            //         console.log('Agregamos ID:' + item.id);
-            //     }
-                
-            // }
+            var accent_map = { 'á': 'a', 'é': 'e', 'è': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'Á': 'a', 'É': 'e', 'è': 'e', 'Í': 'i', 'Ó': 'o', 'Ú': 'u' };
+            function accent_fold(s) {
+                if (!s) { return ''; }
+                var ret = '';
+                for (var i = 0; i < s.length; i++) {
+                    ret += accent_map[s.charAt(i)] || s.charAt(i);
+                }
+                return ret;
+            }
+            
+            function buscaNombreEn(item, index){
+                let nombreParaBuscar = accent_fold(inputLabel.text.toLowerCase());
+                let nombreActual = accent_fold(item.nombreUsuario.toLowerCase());
+                if (nombreActual.search(nombreParaBuscar) >= 0) {
+                    arrayResultados.push({
+                        id: item.id,
+                        filename: item.nombreFoto,
+                        username: item.nombreUsuario
+                    });
+                    console.log('Agregamos ID:' + item.id);
+                }
+            }
 
-            // function creaTextArea(){
-            //     inputLabel = new PIXI.TextInput({
-            //         inputLabel: {
-            //             fontSize: '50px',
-            //             padding: '20px',
-            //             width: '1000px',
-            //             color: '#26272E'
-            //         },
-            //         box: {
-            //             default: { fill: 0xFFFFFF, rounded: 2, stroke: { color: 0xCBCEE0, width: 2 } },
-            //             focused: { fill: 0xE1E3EE, rounded: 2, stroke: { color: 0xABAFC6, width: 2 } },
-            //             disabled: { fill: 0xDBDBDB, rounded: 2 }
-            //         }
-            //     })
+            function creaTextArea(){
+                inputLabel = new PIXI.TextInput({
+                    inputLabel: {
+                        fontSize: '50px',
+                        padding: '20px',
+                        width: '1000px',
+                        color: '#26272E'
+                    },
+                    box: {
+                        default: { fill: 0xFFFFFF, rounded: 2, stroke: { color: 0xCBCEE0, width: 2 } },
+                        focused: { fill: 0xE1E3EE, rounded: 2, stroke: { color: 0xABAFC6, width: 2 } },
+                        disabled: { fill: 0xDBDBDB, rounded: 2 }
+                    }
+                })
 
-            //     inputLabel.placeholder = 'NOMBRE MEDICO...'
-            //     inputLabel.x = popUp.x + popUp.width / 10;
-            //     inputLabel.y = popUp.y + popUp.height / 10;
-            //     inputLabel.width = (popUp.width / 10) * 6;
-            //     inputLabel.height = (popUp.width / 20) * 1.5;
-            //     inputLabel.substituteText = false;
-            //     //inputLabel.pivot.x = inputLabel.width / 2
-            //     //inputLabel.pivot.y = inputLabel.height / 2
-            //     app.stage.addChild(inputLabel)
-            // }
-
-        function agregaCuadricula(){
+                inputLabel.placeholder = 'Nombre a buscar...'
+                inputLabel.x = popUp.x + popUp.width / 10;
+                inputLabel.y = popUp.y + popUp.height / 10;
+                inputLabel.width = (popUp.width / 10) * 6;
+                inputLabel.height = (popUp.width / 20) * 1.5;
+                inputLabel.substituteText = false;
+                //inputLabel.pivot.x = inputLabel.width / 2
+                //inputLabel.pivot.y = inputLabel.height / 2
+                app.stage.addChild(inputLabel)
+            }
+            
+            function agregaCuadricula(){
             const textureDemo = PIXI.Texture.EMPTY;
             for (i = 0; i < (cuadriculaVertial); i++) {
                 for (j = 0; j < (cuadriculaHorizontal); j++) {
