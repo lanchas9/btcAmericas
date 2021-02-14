@@ -159,7 +159,7 @@
         var modoPopUp = false;
         let popUp = new PIXI.Graphics();
         var inputLabel ;
-        var indexMuestraResultados=0;
+        // var indexMuestraResultados=0;
         let arrayResultados = [];
         let imagenParaAnimar = 0;
         let arrayResultadosSprites = [PIXI.Sprite];
@@ -181,10 +181,8 @@
         //         lineJoin: 'round'
         //     });
 
-        //     const basicText = new PIXI.Text('BUSCAR', style);
-        //     basicText.alpha = 0;
-
-
+        const basicText = new PIXI.Text('Resultado búsqueda: ');
+        
         agregaBackColor();
         let sentidoScreenSaver = false;
         let centralizacion = false;
@@ -241,6 +239,11 @@
         var calX = 0;
         var calY = 0;
         //estaba en main antes
+
+        let paginacionMin = 0;
+        let paginacionMax = 0;
+        let paginacionIndex = 0;
+
 		app.ticker.add(animate); 
         
     //} 
@@ -252,8 +255,9 @@
                 
                 agregaBackground();
                 agregaCuadricula(); //agrega las fotos a desplegar 
-                agregaOverlayImagen(); //agrega la imagen de overlay
                 agregaOverlayTransparente();
+                agregaOverlayImagen(); //agrega la imagen de overlay
+                
                 preparaAnimacion();
                 if (modalidadDeBotonBuscar) {
                     agregaBotonBuscar();  //agrega boton buscar
@@ -331,6 +335,8 @@
                     imgAnimacion.height = Math.ceil(cuadro.height);
                     imgAnimacion.alpha = 1.0;
                     estadoAnimacion = 1;
+                    app.stage.removeChild(imgAnimacion);
+                    app.stage.addChild(imgAnimacion);
                 break;
                 case 1: //Ejecutando animacion en crecimiento
                     calX = calculaDeltaX(centroX);
@@ -619,7 +625,7 @@
             }
 
         function agregaOverlayImagen() {
-                const texture = PIXI.Texture.from('imagen1.png');
+                const texture = PIXI.Texture.from('overlay.png');
                 //const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + index + '.JPG');
                 const img = new PIXI.Sprite(texture);   
                 //img.x = (app.renderer.width - maxsize) / 2;
@@ -634,7 +640,7 @@
                 // background.lineStyle(5, 0x00ff00);
                 //background.beginFill(0xff0000);
                 //background.drawCircle(0,0, background.width/2);
-                img.alpha = 0.60;
+                img.alpha = 1.0; //ALPHA de overlay para que se vea completo
                 //background.drawRect(0, 0, maxsize, maxsize);
                 //background.endFill();
                 app.stage.addChild(img);
@@ -786,8 +792,22 @@
                     creaTextArea();
                     mueveBotonBuscar();
                     inputLabel.focus();
+                    basicText.text = '                  ';
+                    basicText.x = inputLabel.x;
+                    basicText.y = inputLabel.y + inputLabel.height + 10;
+
+                    basicText.width = inputLabel.width;
+                    basicText.height = (inputLabel.height/10)*8;
+                    basicText.style.fill = 0xFFFFFE;
+                    app.stage.addChild(basicText);
                 }else{
-                    buscaNombre();
+                    if (inputLabel.text.length >= 3){
+                        basicText.text = '                  ';
+                        buscaNombre();
+                    }else{
+                        basicText.text = 'Mínimo se requieren 3 letras'
+                    }
+                    
                 }
                 
             }
@@ -829,9 +849,9 @@
                 botonExit.width = popUp.width / 20;
                 botonExit.interactive = true;
                 botonExit.buttonMode = true;
-                botonExit.on('click', quitaPopUp);
-                botonExit.on('tap', quitaPopUp);
-                botonExit.on('pointerdown', quitaPopUp);
+                botonExit.on('click', quitaPopUp2);
+                botonExit.on('tap', quitaPopUp2);
+                botonExit.on('pointerdown', quitaPopUp2);
                 app.stage.addChild(botonExit);
             }
 
@@ -839,7 +859,8 @@
                 arrayResultados = [];
                 arrayNombresPersonas.forEach(buscaNombreEn);
                 console.log('Resultado final:' + arrayResultados.length);
-                indexMuestraResultados = 100;
+                basicText.text = "Nombres encontrados: " + arrayResultados.length;
+                // indexMuestraResultados = 100;
                 arrayResultadosSprites.forEach(quitaDeStage);
                 arrayResultadosSprites = [];
                 arrayResultados.forEach(muestraFotoDeBusqueda);
@@ -850,16 +871,28 @@
             }
 
             function abreFoto(x){
-                let id = x.currentTarget.identifier;
-                console.log({ id });
-                idFotoXclick = id;
-                if(!modoPopUp){
-                    animacionXclick = true;
+                if (estadoAnimacion==1 || estadoAnimacion == 2){
+                    if(x.currentTarget.identifier == idFotoXclick){
+                        console.log("iguales");
+                    }else{
+                        app.stage.removeChild(imgAnimacion);
+                        estadoAnimacion = 0;
+                        animacionXclick = true;
+                        console.log("diferentes");
+                        idFotoXclick = x.currentTarget.identifier;
+                    }
+                }else{     
+                    let id = x.currentTarget.identifier;
+                    console.log({ id });
+                    idFotoXclick = id;
+                    if(!modoPopUp){
+                        animacionXclick = true;
+                    }   
                 }
             }
 
             function muestraFotoDeBusqueda(item, index){
-                if(index < 7){
+                if(index < 56){
                     // let idNombre = item.id
                     // let str = '';
                     // if (idNombre < 100) {
@@ -870,15 +903,18 @@
                     // }
                     // const texture = PIXI.Texture.from('originalesWEB/Diapositiva' + str + idNombre + '.JPG');
                     // let texture = new PIXI.Texture.from('originalesWEB/' + arrayNombresFotos[idNombre].nombreFoto);
-                    
+                    let limiteAncho = 8;
                     let texture = new PIXI.Texture.from('originalesWEB/' + arrayNombresFotos[arrayHotZones[item.id - 1].id - 1].pathFull);
 
                     const img = new PIXI.Sprite(texture);
                     // img.x = popUp.x + (popUp.width / 8 / 2) + (indexMuestraResultados * index);
-                    img.x = popUp.x + (popUp.width / 10 / 2) + ((indexMuestraResultados + popUp.width / 10 / 7)*index);
-                    img.y = inputLabel.y + inputLabel.height + 50;
                     img.width = popUp.width / 10;
                     img.height = popUp.width / 10;
+
+                    img.x = popUp.x + (popUp.width / 10 / 2) + ((img.width+(popUp.width / 10 / 7))* (index % limiteAncho));
+                    // img.y = (Math.floor(index/limiteAncho) * (inputLabel.y + inputLabel.height + (popUp.width / 10)) + (inputLabel.y + inputLabel.height + (popUp.width / 10)));
+                    img.y = (Math.floor(index/limiteAncho) * ((popUp.width / 10)) + (basicText.y + basicText.height + (popUp.width / 20)));
+                    
                     img.identifier = index;
                     // Opt-in to interactivity
                     img.interactive = true;
@@ -907,6 +943,11 @@
                 }
             }
 
+            function quitaPopUp2() {
+                imagenParaAnimar=1;
+                quitaPopUp();
+            }
+
             function quitaPopUp(){
                 arrayResultadosSprites.forEach(quitaDeStage);
                 arrayResultadosSprites = [];
@@ -914,6 +955,7 @@
                 app.stage.removeChild(popUp);
                 app.stage.removeChild(botonBuscar2);
                 app.stage.removeChild(botonExit);
+                app.stage.removeChild(basicText);
                 app.stage.addChild(botonBuscar);
                 // botonBuscar.x = 0;
                 // botonBuscar.y = 0;
@@ -930,7 +972,7 @@
                 console.log('Sprite#:' + sprite.identifier);
             }
 
-            var accent_map = { 'á': 'a', 'é': 'e', 'è': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'Á': 'a', 'É': 'e', 'è': 'e', 'Í': 'i', 'Ó': 'o', 'Ú': 'u' };
+            var accent_map = { 'á': 'a', 'é': 'e', 'è': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'Á': 'a', 'É': 'e', 'è': 'e', 'Í': 'i', 'Ó': 'o', 'Ú': 'u' , 'Ü': 'u', 'ü': 'u'};
             function accent_fold(s) {
                 if (!s) { return ''; }
                 var ret = '';
@@ -949,7 +991,8 @@
                         filename: item.nombreFoto,
                         username: item.nombreUsuario
                     });
-                    console.log('Agregamos ID:' + item.id);
+                    // console.log('Agregamos ID:' + item.id);
+                    console.log('Coinsidencias busqueda');
                 }
             }
 
