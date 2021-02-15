@@ -1,0 +1,1 @@
+FOR %%A in (*.jpg) DO (magick %%A -resize 30 %%A)

@@ -251,11 +251,11 @@
         if (terminamosLoading){
             if (estadoAnimacion == -1){
                 estadoAnimacion = 4;
-                agregaBackColor();  //agrega color atras del mosaico
+                //agregaBackColor();  //agrega color atras del mosaico
                 
-                agregaBackground();
                 agregaCuadricula(); //agrega las fotos a desplegar 
-                agregaOverlayTransparente();
+                agregaBackground(); //agrega el jpg original
+                agregaOverlayTransparente(); //Grid cuadricula
                 agregaOverlayImagen(); //agrega la imagen de overlay
                 
                 preparaAnimacion();
@@ -302,7 +302,9 @@
     }
 
     function resizeMovil(){
-        document.location.reload();
+        if (!modoPopUp){
+            document.location.reload();
+        }
     }
 
     window.onresize = function (event) {
@@ -334,9 +336,11 @@
                     imgAnimacion.width = Math.ceil(cuadro.width);
                     imgAnimacion.height = Math.ceil(cuadro.height);
                     imgAnimacion.alpha = 1.0;
-                    estadoAnimacion = 1;
+                    
                     app.stage.removeChild(imgAnimacion);
                     app.stage.addChild(imgAnimacion);
+                    timer=0;
+                    estadoAnimacion = 1;
                 break;
                 case 1: //Ejecutando animacion en crecimiento
                     calX = calculaDeltaX(centroX);
@@ -617,7 +621,7 @@
                 //background.lineStyle(5, 0x00ff00);
                 //background.beginFill(0xff0000);
                 //background.drawCircle(0,0, background.width/2);
-                //img.alpha = 0.70;
+                img.alpha = 0.50;
                 //background.drawRect(0, 0, maxsize, maxsize);
                 //background.endFill();
                 app.stage.addChild(img);
@@ -648,7 +652,7 @@
             }
 
             function agregaOverlayTransparente() {
-                    const texture = PIXI.Texture.from('gridBlanca64x36.png');
+                    const texture = PIXI.Texture.from('gridBlanca1920x1080_Luis.png');
                     //const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + index + '.JPG');
                     const img = new PIXI.Sprite(texture);
                     //img.x = (app.renderer.width - maxsize) / 2;
@@ -663,7 +667,7 @@
                     // background.lineStyle(5, 0x00ff00);
                     //background.beginFill(0xff0000);
                     //background.drawCircle(0,0, background.width/2);
-                    img.alpha = 0.2;
+                    img.alpha = 0.20;
                     //background.drawRect(0, 0, maxsize, maxsize);
                     //background.endFill();
                     app.stage.addChild(img);
@@ -724,10 +728,10 @@
         //     }
 		// function agregaBotonPoliticaPrivacidad() { 
 		function agregaBotonBuscar() {        
-            const texture = PIXI.Texture.from('buscar.png');
+            const texture = PIXI.Texture.from('buscar1.png');
             const img = new PIXI.Sprite(texture);
-            let ancho = cWidth *10;
-            let alto = ancho/6;
+            let ancho = cWidth *5.5;
+            let alto = ancho/4;
             
             botonBuscar = img;
             botonBuscar.anchor.x = 1.0;
@@ -1037,7 +1041,7 @@
                         }
                         // const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + str + index + '.JPG');
                         //const texture = PIXI.Texture.from('coordenadasWEB/Diapositiva' + index + '.JPG');
-                        let imagePath = pathSkandia + 'coordenadasWEB/' + arrayNombresFotos[index].path
+                        let imagePath = pathSkandia + 'originalesLowWEB/' + arrayNombresFotos[index].path
                         const texture = PIXI.Texture.from(imagePath);
                         // console.log("loadingTexture:" + imagePath)
                         console.log("loadingTexture:")
