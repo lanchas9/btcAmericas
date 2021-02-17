@@ -34,7 +34,7 @@
             view: canvas,
             width: window.innerWidth,
             height: window.innerHeight,
-            backgroundColor : 0xFFFFFF
+            backgroundColor : 0x000000
         });
         let canvasWidth = app.renderer.width;
         let canvasHeight = app.renderer.height;
@@ -48,14 +48,16 @@
 
         if (canvasWidth >= canvasHeight) {
             //Computadora de escritorio - Horizontal
-            imgPortada.height = canvasHeight;
-            imgPortada.width = canvasHeight;
+            imgPortada.height = canvasHeight / 10 * 6;
+            imgPortada.width = imgPortada.height;
             imgPortada.x = (canvasWidth - imgPortada.width) / 2;
+            imgPortada.y = (canvasHeight - imgPortada.height) / 2;
         } else {
             //celular o tablet - Vertical
-            imgPortada.width = canvasWidth;
-            imgPortada.height = canvasWidth;
+            imgPortada.width = canvasWidth / 10 * 5;
+            imgPortada.height = imgPortada.width;
             imgPortada.y = (canvasHeight - imgPortada.height) / 2;
+            imgPortada.x = (canvasWidth - imgPortada.width) / 2;
         }
         let textureSalirPortada = new PIXI.Texture.from('exit.png');
         let btnSalirPortada = new PIXI.Sprite(textureSalirPortada);
@@ -63,6 +65,8 @@
         btnSalirPortada.anchor.y = 0.0;
         btnSalirPortada.x = imgPortada.x + imgPortada.width;
         btnSalirPortada.y = imgPortada.y
+        btnSalirPortada.width = imgPortada.width/10;
+        btnSalirPortada.height = imgPortada.height/10;
         btnSalirPortada.interactive = true;
         btnSalirPortada.buttonMode = true;
         var modoPopUp = true;
