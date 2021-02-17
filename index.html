@@ -33,7 +33,7 @@
             view: canvas,
             width: window.innerWidth,
             height: window.innerHeight,
-            backgroundColor: 0xFFFFFF
+            backgroundColor: 0x000000
         });
         console.log('Resolucion Canvas');
         console.log('Canvas Width : ' + app.renderer.width);
@@ -42,20 +42,35 @@
         let canvasWidth = app.renderer.width;
         let canvasHeight = app.renderer.height;
 
-        let texture = new PIXI.Texture.from('LANDING_cuadrada.jpg');    
+        let texture = new PIXI.Texture.from('LANDING_cuadrada.png');    
         let imgPortada = new PIXI.Sprite(texture);
-
+        
+        let strTipoFondo='';
+        let fondoWidth = 0;
+        let fondoHeight = 0;
         if(canvasWidth >= canvasHeight){
             //Computadora de escritorio - Horizontal
             imgPortada.height = canvasHeight;
             imgPortada.width = canvasHeight;
             imgPortada.x = (canvasWidth - imgPortada.width)/2;
+            strTipoFondo = 'fondoHorizontal.png';
+            fondoHeight = canvasHeight;
+            fondoWidth = canvasHeight / 9 * 16;
         }else{
             //celular o tablet - Vertical
             imgPortada.width = canvasWidth;
             imgPortada.height = canvasWidth;
             imgPortada.y = (canvasHeight - imgPortada.height) / 2;
+            strTipoFondo = 'fondoVertical.png';
+            fondoWidth = canvasWidth;
+            fondoHeight = canvasWidth / 9 * 16;
         }
+        let textureFondo = new PIXI.Texture.from(strTipoFondo);    
+        let imgFondo = new PIXI.Sprite(textureFondo);
+        imgFondo.width = fondoWidth;
+        imgFondo.height = fondoHeight;
+        imgFondo.x = (canvasWidth - imgFondo.width) / 2;
+        imgFondo.y = (canvasHeight - imgFondo.height) / 2;
 
         // let vacio = new PIXI.Texture.from('buscar1.png');
         let btnIzq = new PIXI.Sprite();
@@ -85,7 +100,7 @@
         btnDer.on('click', abrePPT);
         btnDer.on('tap', abrePPT);
         // btnDer.on('pointerdown', abrePPT);
-
+        app.stage.addChild(imgFondo);
         app.stage.addChild(btnIzq);
         app.stage.addChild(btnDer);
         app.stage.addChild(imgPortada);
