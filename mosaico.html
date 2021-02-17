@@ -65,6 +65,7 @@
         btnSalirPortada.y = imgPortada.y
         btnSalirPortada.interactive = true;
         btnSalirPortada.buttonMode = true;
+        var modoPopUp = true;
         btnSalirPortada.on('click', cierraPortada);
         btnSalirPortada.on('tap', cierraPortada);
 //---------------------
@@ -185,7 +186,7 @@
         // botonPrivacidad.visible = false;
         // botonPrivacidad.enabled = false;
         var modalidadDeBotonBuscar  = true;
-        var modoPopUp = false;
+        
         let popUp = new PIXI.Graphics();
         var inputLabel ;
         // var indexMuestraResultados=0;
@@ -317,6 +318,7 @@
     function cierraPortada(){
         app.stage.removeChild(imgPortada);
         app.stage.removeChild(btnSalirPortada);
+        modoPopUp = false;
     }
 
     function resizeResponsive() {
