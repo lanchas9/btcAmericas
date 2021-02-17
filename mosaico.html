@@ -34,7 +34,7 @@
             view: canvas,
             width: window.innerWidth,
             height: window.innerHeight,
-            backgroundColor : 0x000000
+            backgroundColor : 0xFFFFFF
         });
         let canvasWidth = app.renderer.width;
         let canvasHeight = app.renderer.height;
@@ -43,7 +43,7 @@
         console.log('Canvas Height: '+ canvasHeight);
         // document.body.style.background = "black";
 
-        let texturePortada = new PIXI.Texture.from('bienvenida.jpg');
+        let texturePortada = new PIXI.Texture.from('bienvenida2.jpg');
         let imgPortada = new PIXI.Sprite(texturePortada);
 
         if (canvasWidth >= canvasHeight) {
@@ -726,7 +726,7 @@
             //background.anchor.y = 0.0;
             //background.color = red;
             // background.lineStyle(5, 0x00ff00);
-            background.beginFill(0x000000);
+            background.beginFill(0xFFFFFF);
             //background.drawCircle(0,0, background.width/2);
             //background.alpha = 0.30;
             background.drawRect(0, 0, maxsizeHorizontal, maxsizeVertical);
