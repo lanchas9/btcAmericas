@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenida ICONNECTION 98 aniversario</title>
+    <title>Redes Sociales ICONNECTION 98 aniversario</title>
 <style>
     body {
         margin: 0;
@@ -42,7 +42,7 @@
         let canvasWidth = app.renderer.width;
         let canvasHeight = app.renderer.height;
 
-        let texture = new PIXI.Texture.from('landing3.png');    
+        let texture = new PIXI.Texture.from('redessociales.png');    
         let imgPortada = new PIXI.Sprite(texture);
         
         let strTipoFondo='';
@@ -50,9 +50,9 @@
         let fondoHeight = 0;
         if(canvasWidth >= canvasHeight){
             //Computadora de escritorio - Horizontal
-            imgPortada.height = canvasHeight / 10 * 10;
+            imgPortada.height = canvasHeight / 10 * 9;
             imgPortada.width = imgPortada.height;
-            imgPortada.x = (canvasWidth - imgPortada.width)/2;
+            imgPortada.x = (canvasWidth - imgPortada.width)/10*7;
             imgPortada.y = (canvasHeight - imgPortada.height) / 2;
             strTipoFondo = 'fondoHorizontal.png';
             // Algoritmo para centrado ASPECT FIT
@@ -85,7 +85,6 @@
                     strTipoFondo = 'fondoVertical_ipad.png';
                     fondoHeight = canvasHeight;
                     fondoWidth = canvasWidth;
-
                 }
             }
         }
@@ -97,22 +96,22 @@
         imgFondo.y = (canvasHeight - imgFondo.height) / 2;
 
         // let vacio = new PIXI.Texture.from('buscar1.png');
-        let btnIzq = new PIXI.Sprite();
-        btnIzq.x = 0;
-        btnIzq.y = 0;
-        btnIzq.width = canvasWidth/2;
-        btnIzq.height = canvasHeight;
-        btnIzq.interactive = true;
-        btnIzq.buttonMode = true;
-        // btnIzq.on('click', abreMosaico('click'));
-        // btnIzq.on('tap', abreMosaico('tap'));
-        // btnIzq.on('pointerdown', abreMosaico('pointerdown'));
-        btnIzq.on('click', abreMosaico);
-        btnIzq.on('tap', abreMosaico);
-        // btnIzq.on('pointerdown', abreMosaico);
+        // let btnIzq = new PIXI.Sprite();
+        // btnIzq.x = 0;
+        // btnIzq.y = 0;
+        // btnIzq.width = canvasWidth/2;
+        // btnIzq.height = canvasHeight;
+        // btnIzq.interactive = true;
+        // btnIzq.buttonMode = true;
+        // // btnIzq.on('click', abreMosaico('click'));
+        // // btnIzq.on('tap', abreMosaico('tap'));
+        // // btnIzq.on('pointerdown', abreMosaico('pointerdown'));
+        // btnIzq.on('click', abreMosaico);
+        // btnIzq.on('tap', abreMosaico);
+        // // btnIzq.on('pointerdown', abreMosaico);
 
         let btnDer = new PIXI.Sprite();
-        btnDer.x = canvasWidth / 2;
+        btnDer.x = (canvasWidth - imgPortada.width) / 10 * 7;
         btnDer.y = 0;
         btnDer.width = canvasWidth;
         btnDer.height = canvasHeight;
@@ -125,28 +124,18 @@
         btnDer.on('tap', abrePPT);
         // btnDer.on('pointerdown', abrePPT);
         app.stage.addChild(imgFondo);
-        app.stage.addChild(btnIzq);
+        // app.stage.addChild(btnIzq);
         app.stage.addChild(btnDer);
         app.stage.addChild(imgPortada);
 
-        function abreMosaico(e){
-            // console.log('izq: ' + e.type);
-            gtag('event', 'Click_EnMenu_Mosaico', {
-                'event_label': 'Landing Page',
-                'event_category': 'clicks',
-                'non_interaction': true
-            });
-            window.open("mosaico.html");
-        }
-
         function abrePPT(e) {
             // console.log('der: ' + e.type);
-            gtag('event', 'Click_EnMenu_RedesSociales', {
+            gtag('event', 'Click_EnMenu_PowerPoint', {
                 'event_label': 'Landing Page',
                 'event_category': 'clicks',
                 'non_interaction': true
             });
-            window.open("index2.html");
+            window.open("Template_FotosRedesSociales.pptx");
         }
         
         window.onresize = function (event) {

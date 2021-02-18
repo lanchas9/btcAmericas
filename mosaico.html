@@ -132,6 +132,7 @@
         let primeraVezLoading = true;
         const cuadriculaHorizontal = 64;
         const cuadriculaVertial = 36;
+        const porcentajePopImagen = .6;
         let terminamosLoading = false;
         let hayBanner = false;
         let modoRandom = true;
@@ -391,8 +392,12 @@
                     calY = calculaDeltaY(centroY);
                     if (posicionCentral(calX,calY)){
                     //if ((background.x < imgAnimacion.x) && (background.y < imgAnimacion.y)) {
-                        imgAnimacion.width = imgAnimacion.width + (resizeFactor * 1);
-                        imgAnimacion.height = imgAnimacion.height + (resizeFactor * 1);
+                        if ((imgAnimacion.width + (resizeFactor * 1)) <= (background.height * porcentajePopImagen)){
+                            imgAnimacion.width = imgAnimacion.width + (resizeFactor * 1);
+                        }
+                        if ((imgAnimacion.height + (resizeFactor * 1)) <= (background.height * porcentajePopImagen)) {
+                            imgAnimacion.height = imgAnimacion.height + (resizeFactor * 1);
+                        }
                         //imgAnimacion.x = imgAnimacion.x - resizeFactor + calX;
                         //imgAnimacion.y = imgAnimacion.y - resizeFactor + calY;
                         imgAnimacion.x = imgAnimacion.x + calX;
@@ -499,8 +504,17 @@
             let imgIzq = imgAnimacion.x - (imgAnimacion.width);
             let imgTop = imgAnimacion.y - (imgAnimacion.height);
             //Limites animacion ERR
+            
+            let alturaAnima = imgAnimacion.height;
+            let metaAnima = ((background.height * porcentajePopImagen) + resizeFactor);
+            console.log({ posX, posY, alturaAnima, metaAnima});
             // if ( (posX<=0) && (posY<=0) &&  (imgIzq <= Math.ceil(background.x)) && (imgTop <= Math.ceil(background.y)) && (imgAnimacion.width >= background.width) && (imgAnimacion.height >= background.height)){
-            if ( (posX<=0) && (posY<=0) &&  (imgIzq <= Math.ceil(background.x)) && (imgTop <= Math.ceil(background.y)) && (imgAnimacion.height >= background.height)){
+            // if ( (posX<=0) && (posY<=0) &&  (imgIzq <= Math.ceil(background.x)) && (imgTop <= Math.ceil(background.y)) && (imgAnimacion.height >= (background.height * porcentajePopImagen))){
+            
+            
+                if ((posX <= 0) && (posY <= 0) && ((imgAnimacion.height + resizeFactor) >= (background.height * porcentajePopImagen))) {
+                imgAnimacion.height = (background.height * porcentajePopImagen);
+                imgAnimacion.width = imgAnimacion.height;
                 resul = false;
                 console.log("Estamos en el CENTRO");
             }else{
