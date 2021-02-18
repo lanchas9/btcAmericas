@@ -43,22 +43,28 @@
         console.log('Canvas Height: '+ canvasHeight);
         // document.body.style.background = "black";
 
-        let texturePortada = new PIXI.Texture.from('bienvenida2.jpg');
-        let imgPortada = new PIXI.Sprite(texturePortada);
+        let texturePortada;
+        let imgPortada;
 
         if (canvasWidth >= canvasHeight) {
             //Computadora de escritorio - Horizontal
+            texturePortada = new PIXI.Texture.from('bienvenida4.jpg');
+            imgPortada = new PIXI.Sprite(texturePortada);
             imgPortada.height = canvasHeight / 10 * 6;
             imgPortada.width = imgPortada.height;
             imgPortada.x = (canvasWidth - imgPortada.width) / 2;
             imgPortada.y = (canvasHeight - imgPortada.height) / 2;
         } else {
             //celular o tablet - Vertical
+            texturePortada = new PIXI.Texture.from('bienvenida3.jpg');
+            imgPortada = new PIXI.Sprite(texturePortada);
             imgPortada.width = canvasWidth / 10 * 5;
             imgPortada.height = imgPortada.width;
             imgPortada.y = (canvasHeight - imgPortada.height) / 2;
             imgPortada.x = (canvasWidth - imgPortada.width) / 2;
         }
+        console.log('imgPortada.width: ' + imgPortada.width);
+        console.log('imgPortada.height: ' + imgPortada.height);
         let textureSalirPortada = new PIXI.Texture.from('exit.png');
         let btnSalirPortada = new PIXI.Sprite(textureSalirPortada);
         btnSalirPortada.anchor.x = 1.0;
