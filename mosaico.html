@@ -45,7 +45,8 @@
 
         let texturePortada;
         let imgPortada;
-
+        let resizeFactor = 5;
+        let velocidadAnimacionFactor = 10;
         if (canvasWidth >= canvasHeight) {
             //Computadora de escritorio - Horizontal
             texturePortada = new PIXI.Texture.from('bienvenida4.jpg');
@@ -56,6 +57,8 @@
             imgPortada.y = (canvasHeight - imgPortada.height) / 2;
         } else {
             //celular o tablet - Vertical
+            resizeFactor = 1;
+            velocidadAnimacionFactor = 1;
             texturePortada = new PIXI.Texture.from('bienvenida4.jpg');
             imgPortada = new PIXI.Sprite(texturePortada);
             imgPortada.width = canvasWidth / 10 * 5;
@@ -185,8 +188,7 @@
         let colSprites = [PIXI.Sprite];
         let overlay = PIXI.Sprite;
         let overlayGrid = PIXI.Sprite;
-        let resizeFactor = 5;
-        let velocidadAnimacionFactor = 10;
+        
         var randomIndex = 0;
         let background = new PIXI.Graphics();
         // let botonPrivacidad = new PIXI.Graphics();
