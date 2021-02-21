@@ -938,6 +938,17 @@
                 arrayResultadosSprites.forEach(quitaDeStage);
                 arrayResultadosSprites = [];
                 arrayResultados.forEach(muestraFotoDeBusqueda);
+                guardaBusqueda();
+            }
+
+            function guardaBusqueda(){
+                let strNuevo  = encodeURIComponent(inputLabel.text.trim());
+                let str = 'search.html?q=' + strNuevo;
+                fetch(str)
+                .then(response => {
+                    console.log('buscamos: ' + inputLabel.text);
+                    console.log('enviamos: ' + strNuevo);
+                })
             }
 
             function quitaDeStage(item,index){
