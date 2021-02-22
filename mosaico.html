@@ -877,9 +877,19 @@
                 }else{
                     if (inputLabel.text.length >= 3){
                         basicText.text = '                  ';
+                        gtag('event', 'Buscador_Mosaico', {
+                            'event_label': 'Landing Page',
+                            'event_category': 'clicks',
+                            'non_interaction': true
+                        });
                         buscaNombre();
                     }else{
                         basicText.text = 'Mínimo se requieren 3 letras'
+                        gtag('event', 'BuscadorSinTexto_Mosaico', {
+                            'event_label': 'Landing Page',
+                            'event_category': 'clicks',
+                            'non_interaction': true
+                        });
                     }
                     
                 }
